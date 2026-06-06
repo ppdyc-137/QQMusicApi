@@ -88,6 +88,7 @@ def _setup_logging(config) -> None:
 
 
 if __name__ == "__main__":
+    from web.src.app import create_app
     from web.src.core.config import settings
 
     settings.logging.file_path = str(project_root / settings.logging.file_path)
@@ -96,7 +97,7 @@ if __name__ == "__main__":
     _setup_logging(settings.logging)
 
     uvicorn.run(
-        "web.src.app:create_app",
+        create_app,
         factory=True,
         host=settings.server.host,
         port=settings.server.port,
