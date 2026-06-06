@@ -255,7 +255,7 @@ class SingerApi(ApiModule):
         return self._build_request(
             module="music.musichallSinger.SingerInfoInter",
             method="GetSingerDetail",
-            param={"singer_mids": mids, "groups": 1, "wikis": 1},
+            param={"singer_mids": mids, "group_singer": 1, "wiki_singer": 1, "ex_singer": 1},
             response_model=SingerDetailResponse,
         )
 
