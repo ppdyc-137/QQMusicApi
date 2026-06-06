@@ -85,6 +85,13 @@ class CredentialStoreConfig(BaseModel):
     path: str = Field(default="web/data/credentials.sqlite3", description="SQLite Credential 状态库路径")
 
 
+class RuntimeConfig(BaseModel):
+    """运行时文件路径配置."""
+
+    device_path: str = Field(default="web/data/device.json", description="设备信息文件路径")
+    account_config_path: str = Field(default="web/accounts.toml", description="账号种子配置路径")
+
+
 class CredentialConfig(BaseModel):
     """全局默认凭证配置."""
 
@@ -190,6 +197,7 @@ class Settings(BaseSettings):
     cache: CacheConfig = CacheConfig()
     security: SecurityConfig = SecurityConfig()
     credential: CredentialConfig = CredentialConfig()
+    runtime: RuntimeConfig = RuntimeConfig()
 
     @classmethod
     def settings_customise_sources(

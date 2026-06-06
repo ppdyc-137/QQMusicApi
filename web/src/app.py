@@ -27,8 +27,8 @@ from qqmusic_api.core.exceptions import (
 
 from .core.auth import startup_credential_health_check
 from .core.cache import MemoryBackend, RedisBackend
-from .core.config import PROJECT_ROOT, SecurityConfig, settings
-from .core.credential_store import ACCOUNT_CONFIG_FILE, CredentialStore, load_account_configs
+from .core.config import SecurityConfig, settings
+from .core.credential_store import CredentialStore, load_account_configs
 from .core.deps import WebServices
 from .core.response import ErrorResponse, error_response
 from .core.security import apply_security_middleware, configure_security
@@ -45,7 +45,6 @@ _ERROR_RESPONSES: dict[int | str, dict[str, Any]] = {
     422: {"model": ErrorResponse},
 }
 
-_DEVICE_PATH = str(PROJECT_ROOT / "web" / "data" / "device.json")
 _HTTP_ERROR_MESSAGES = {
     400: "请求错误",
     401: "未授权",
@@ -80,7 +79,7 @@ async def _lifespan(app: FastAPI):
     services: WebServices = app.state.services
     try:
         logger.info("初始化 SDK Client...")
-        services.client = Client(device_path=_DEVICE_PATH)
+        services.client = Client(device_path=settings.runtime.device_path)
         logger.debug("SDK Client 初始化完成")
 
         logger.debug("配置全局凭证设置...")
@@ -91,7 +90,7 @@ async def _lifespan(app: FastAPI):
         services.credential_store.initialize()
 
         logger.info("同步账号种子配置...")
-        services.credential_store.sync_accounts(load_account_configs(ACCOUNT_CONFIG_FILE))
+        services.credential_store.sync_accounts(load_account_configs(settings.runtime.account_config_path))
 
         logger.info("执行启动凭证健康检查...")
         await startup_credential_health_check(services.client, services.credential_store)
