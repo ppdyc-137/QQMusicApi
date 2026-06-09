@@ -30,6 +30,8 @@ class RecommendApi(ApiModule):
         direction: int = 0,
         s_num: int = 0,
         v_cache: list[str] | None = None,
+        *,
+        credential: Credential | None = None,
     ):
         """获取主页推荐.
 
@@ -38,6 +40,7 @@ class RecommendApi(ApiModule):
             direction: 刷新方向.
             s_num: 已加载的卡片数量.
             v_cache: 已曝光的卡片 ID 缓存, 防止重复推荐.
+            credential: 请求凭证.
         """
         data: dict[str, Any] = {
             "direction": direction,
@@ -74,6 +77,7 @@ class RecommendApi(ApiModule):
             "get_recommend_feed",
             data,
             response_model=RecommendFeedCardResponse,
+            credential=credential,
             pager_meta=PagerMeta(
                 strategy=MultiFieldContinuationStrategy(
                     _build_home_feed_next_params,
@@ -88,6 +92,9 @@ class RecommendApi(ApiModule):
 
         Tips:
             请求平台非 `Platform.ANDROID` 时, 需要提供有效的 `Credential`.
+
+        Args:
+            credential: 请求凭证.
         """
         data = {
             "id": 99,
@@ -104,11 +111,12 @@ class RecommendApi(ApiModule):
             credential=credential,
         )
 
-    def get_radar_recommend(self, page: int = 1):
+    def get_radar_recommend(self, page: int = 1, *, credential: Credential | None = None):
         """获取雷达推荐.
 
         Args:
             page: 页码.
+            credential: 请求凭证.
         """
         data = {
             "Page": page,
@@ -121,18 +129,20 @@ class RecommendApi(ApiModule):
             "GetRadarSong",
             data,
             response_model=RadarRecommendResponse,
+            credential=credential,
             pager_meta=PagerMeta(
                 strategy=PageStrategy(page_key="Page", start_page=page),
                 adapter=ResponseAdapter(has_more_flag="has_more"),
             ),
         )
 
-    def get_recommend_songlist(self, page: int = 1, num: int = 25):
+    def get_recommend_songlist(self, page: int = 1, num: int = 25, *, credential: Credential | None = None):
         """获取推荐歌单.
 
         Args:
             page: 页码.
             num: 返回推荐歌单数量.
+            credential: 请求凭证.
         """
         data = {"From": num * (page - 1), "Size": num}
         return self._build_request(
@@ -140,18 +150,24 @@ class RecommendApi(ApiModule):
             "GetRecommendFeed",
             data,
             response_model=RecommendSonglistResponse,
+            credential=credential,
             pager_meta=PagerMeta(
                 strategy=CursorStrategy(cursor_key="From"),
                 adapter=ResponseAdapter(has_more_flag="has_more", cursor="from_limit"),
             ),
         )
 
-    def get_recommend_newsong(self):
-        """获取推荐新歌."""
+    def get_recommend_newsong(self, *, credential: Credential | None = None):
+        """获取推荐新歌.
+
+        Args:
+            credential: 请求凭证.
+        """
         data = {"type": 5}
         return self._build_request(
             "newsong.NewSongServer",
             "get_new_song_info",
             data,
             response_model=RecommendNewSongResponse,
+            credential=credential,
         )

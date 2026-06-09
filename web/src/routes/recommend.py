@@ -8,7 +8,7 @@ from qqmusic_api.models.recommend import (
     RecommendSonglistResponse,
 )
 
-from ..routing.route_types import PUBLIC_60, AuthPolicy, WebRoute
+from ..routing.route_types import AuthPolicy, WebRoute
 from ._helpers import Q, R
 
 ROUTES: tuple[WebRoute, ...] = (
@@ -19,27 +19,33 @@ ROUTES: tuple[WebRoute, ...] = (
         GuessRecommendResponse,
         auth=AuthPolicy.COOKIE_OR_DEFAULT,
     ),
-    R("recommend", "get_home_feed", "/recommend/get_home_feed", RecommendFeedCardResponse, cache=PUBLIC_60),
+    R(
+        "recommend",
+        "get_home_feed",
+        "/recommend/get_home_feed",
+        RecommendFeedCardResponse,
+        auth=AuthPolicy.COOKIE_OR_DEFAULT,
+    ),
     R(
         "recommend",
         "get_radar_recommend",
         "/recommend/get_radar_recommend",
         RadarRecommendResponse,
         params=(Q("page", int, 1, "页码."),),
-        cache=PUBLIC_60,
+        auth=AuthPolicy.COOKIE_OR_DEFAULT,
     ),
     R(
         "recommend",
         "get_recommend_newsong",
         "/recommend/get_recommend_newsong",
         RecommendNewSongResponse,
-        cache=PUBLIC_60,
+        auth=AuthPolicy.COOKIE_OR_DEFAULT,
     ),
     R(
         "recommend",
         "get_recommend_songlist",
         "/recommend/get_recommend_songlist",
         RecommendSonglistResponse,
-        cache=PUBLIC_60,
+        auth=AuthPolicy.COOKIE_OR_DEFAULT,
     ),
 )
