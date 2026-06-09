@@ -78,9 +78,9 @@ class Client:
             hooks: 请求/响应钩子, 详见 niquests 文档.
         """
         self._session = AsyncSession(
-            multiplexed=True,
+            multiplexed=False,
             hooks=AsyncTokenBucketLimiter(rate=rate or 10, capacity=capacity or 50),
-            happy_eyeballs=True,
+            happy_eyeballs=False,
             retries=Retry(
                 total=connect_retries or 2,
                 connect=connect_retries or 2,
